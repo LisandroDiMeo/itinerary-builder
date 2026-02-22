@@ -10,9 +10,9 @@ export function useItineraryHelpers(itinerary: () => Itinerary | undefined) {
 
     for (const day of it.days) {
       if (!current || current.location !== day.location) {
-        if (current) {
+        if (current && current.days.length > 0) {
           current.nights = current.days.length
-          current.endDate = current.days[current.days.length - 1].date
+          current.endDate = current.days[current.days.length - 1]!.date
         }
         current = {
           location: day.location,
@@ -27,9 +27,9 @@ export function useItineraryHelpers(itinerary: () => Itinerary | undefined) {
         current.days.push(day)
       }
     }
-    if (current) {
+    if (current && current.days.length > 0) {
       current.nights = current.days.length
-      current.endDate = current.days[current.days.length - 1].date
+      current.endDate = current.days[current.days.length - 1]!.date
     }
     return groups
   })
@@ -37,7 +37,7 @@ export function useItineraryHelpers(itinerary: () => Itinerary | undefined) {
   const dateRange = computed(() => {
     const it = itinerary()
     if (!it || it.days.length === 0) return { start: '', end: '' }
-    return { start: it.days[0].date, end: it.days[it.days.length - 1].date }
+    return { start: it.days[0]!.date, end: it.days[it.days.length - 1]!.date }
   })
 
   const mapMarkers = computed(() => {

@@ -17,7 +17,10 @@ const borderColor = computed(() => getLocationColor(firstLocation.value).border)
 const dateRange = computed(() => {
   const days = props.itinerary.days
   if (days.length === 0) return 'No dates'
-  return formatDateRange(days[0].date, days[days.length - 1].date)
+  const first = days[0]
+  const last = days[days.length - 1]
+  if (!first || !last) return 'No dates'
+  return formatDateRange(first.date, last.date)
 })
 
 const stopSummary = computed(() => {

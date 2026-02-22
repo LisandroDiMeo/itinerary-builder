@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, watch, nextTick, type Ref } from 'vue'
+import { onMounted, onUnmounted, watch, nextTick, type Ref } from 'vue'
 import L from 'leaflet'
 import type { StopGroup, ItineraryDay } from '@/types'
 import { getMarkerColor } from '@/utils/colors'
@@ -17,14 +17,15 @@ export function useMap(
   stopGroups: Ref<StopGroup[]>,
   days: Ref<ItineraryDay[]>
 ) {
-  const map = ref<L.Map | null>(null)
+  let mapInstance: L.Map | null = null
 
   function render() {
-    if (!map.value) return
+    const m = mapInstance
+    if (!m) return
     // Clear all non-tile layers
-    map.value.eachLayer((layer) => {
+    m.eachLayer((layer) => {
       if (!(layer instanceof L.TileLayer)) {
-        map.value!.removeLayer(layer)
+        m.removeLayer(layer)
       }
     })
 
@@ -33,8 +34,6 @@ export function useMap(
 
     const allCoords: L.LatLngTuple[] = []
     const routeCoords: L.LatLngTuple[] = []
-
-    // Collect all day trip destinations for bounds
     const dayTripCoords: L.LatLngTuple[] = []
 
     // Route polyline (draw first so markers sit on top)
@@ -50,7 +49,7 @@ export function useMap(
         opacity: 0.3,
         lineCap: 'round',
         lineJoin: 'round',
-      }).addTo(map.value!)
+      }).addTo(m)
 
       // Main route line
       L.polyline(routeCoords, {
@@ -59,7 +58,7 @@ export function useMap(
         opacity: 0.8,
         lineCap: 'round',
         lineJoin: 'round',
-      }).addTo(map.value!)
+      }).addTo(m)
     }
 
     // Day trip dashed lines
@@ -75,7 +74,7 @@ export function useMap(
           dashArray: '8 6',
           opacity: 0.7,
           lineCap: 'round',
-        }).addTo(map.value!)
+        }).addTo(m)
 
         // Day trip destination marker (smaller)
         L.circleMarker(to, {
@@ -86,7 +85,7 @@ export function useMap(
           weight: 2,
         })
           .bindPopup(`<strong>Day trip:</strong> ${day.dayTripDestination}`)
-          .addTo(map.value!)
+          .addTo(m)
       }
     }
 
@@ -103,7 +102,7 @@ export function useMap(
         fillColor: '#ffffff',
         fillOpacity: 0.9,
         weight: 0,
-      }).addTo(map.value!)
+      }).addTo(m)
 
       // Colored marker
       const marker = L.circleMarker([lat, lng], {
@@ -112,7 +111,7 @@ export function useMap(
         fillColor: color,
         fillOpacity: 0.85,
         weight: 2,
-      }).addTo(map.value!)
+      }).addTo(m)
 
       marker.bindPopup(`
         <div style="text-align:center;min-width:120px;">
@@ -129,13 +128,13 @@ export function useMap(
     const boundsCoords = [...allCoords, ...dayTripCoords]
     if (boundsCoords.length > 0) {
       const bounds = L.latLngBounds(boundsCoords)
-      map.value!.fitBounds(bounds.pad(0.12))
+      m.fitBounds(bounds.pad(0.12))
     }
   }
 
   onMounted(async () => {
     if (!container.value) return
-    map.value = L.map(container.value, {
+    mapInstance = L.map(container.value, {
       center: [36.5, 137.0],
       zoom: 6,
       zoomControl: true,
@@ -144,12 +143,12 @@ export function useMap(
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 18,
-    }).addTo(map.value)
+    }).addTo(mapInstance)
 
     // Let the container settle, then fix tile rendering
     await nextTick()
     setTimeout(() => {
-      map.value?.invalidateSize()
+      mapInstance?.invalidateSize()
       render()
     }, 150)
   })
@@ -157,8 +156,9 @@ export function useMap(
   watch([stopGroups, days], () => render(), { deep: true })
 
   onUnmounted(() => {
-    map.value?.remove()
+    mapInstance?.remove()
+    mapInstance = null
   })
 
-  return { map }
+  return { map: mapInstance }
 }

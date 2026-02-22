@@ -12,10 +12,10 @@ const emit = defineEmits<{ toggleSelection: [] }>()
 
 const dateRange = computed(() => {
   if (props.itinerary.days.length === 0) return 'No dates'
-  return formatDateRange(
-    props.itinerary.days[0].date,
-    props.itinerary.days[props.itinerary.days.length - 1].date
-  )
+  const first = props.itinerary.days[0]
+  const last = props.itinerary.days[props.itinerary.days.length - 1]
+  if (!first || !last) return 'No dates'
+  return formatDateRange(first.date, last.date)
 })
 
 const locationCount = computed(() => {
