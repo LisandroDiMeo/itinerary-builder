@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch, nextTick, type Ref } from 'vue'
 import L from 'leaflet'
 import type { StopGroup, ItineraryDay } from '@/types'
 import { getMarkerColor } from '@/utils/colors'
@@ -21,7 +21,7 @@ export function useMap(
 
   function render() {
     if (!map.value) return
-    // Clear layers
+    // Clear all non-tile layers
     map.value.eachLayer((layer) => {
       if (!(layer instanceof L.TileLayer)) {
         map.value!.removeLayer(layer)
@@ -31,80 +31,127 @@ export function useMap(
     const groups = stopGroups.value
     if (groups.length === 0) return
 
-    const coords: L.LatLngExpression[] = []
+    const allCoords: L.LatLngTuple[] = []
+    const routeCoords: L.LatLngTuple[] = []
 
-    // Circle markers for each stop
+    // Collect all day trip destinations for bounds
+    const dayTripCoords: L.LatLngTuple[] = []
+
+    // Route polyline (draw first so markers sit on top)
     for (const g of groups) {
-      const [lat, lng] = g.coordinates
-      const color = getMarkerColor(g.location)
-      const radius = Math.max(8, Math.min(20, g.nights * 4))
-      const marker = L.circleMarker([lat, lng], {
-        radius,
-        color,
-        fillColor: color,
-        fillOpacity: 0.6,
-        weight: 2,
-      }).addTo(map.value!)
-
-      marker.bindPopup(`
-        <strong>${g.location}</strong><br/>
-        ${g.nights} night${g.nights > 1 ? 's' : ''}<br/>
-        ${formatDateRange(g.startDate, g.endDate)}
-      `)
-
-      coords.push([lat, lng])
+      routeCoords.push([g.coordinates[0], g.coordinates[1]])
     }
 
-    // Route polyline
-    if (coords.length > 1) {
-      L.polyline(coords, { color: '#9ca3af', weight: 2, opacity: 0.6 }).addTo(map.value!)
+    // Route outline (thicker, darker — gives a "border" effect)
+    if (routeCoords.length > 1) {
+      L.polyline(routeCoords, {
+        color: '#374151',
+        weight: 5,
+        opacity: 0.3,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map.value!)
+
+      // Main route line
+      L.polyline(routeCoords, {
+        color: '#3b82f6',
+        weight: 3,
+        opacity: 0.8,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map.value!)
     }
 
     // Day trip dashed lines
     for (const day of days.value) {
       if (day.isDayTrip && day.dayTripCoordinates) {
-        const from: L.LatLngExpression = [day.coordinates[0], day.coordinates[1]]
-        const to: L.LatLngExpression = [day.dayTripCoordinates[0], day.dayTripCoordinates[1]]
+        const from: L.LatLngTuple = [day.coordinates[0], day.coordinates[1]]
+        const to: L.LatLngTuple = [day.dayTripCoordinates[0], day.dayTripCoordinates[1]]
+        dayTripCoords.push(to)
 
         L.polyline([from, to], {
-          color: '#a78bfa',
-          weight: 1.5,
-          dashArray: '6 4',
+          color: '#8b5cf6',
+          weight: 2,
+          dashArray: '8 6',
           opacity: 0.7,
+          lineCap: 'round',
         }).addTo(map.value!)
 
+        // Day trip destination marker (smaller)
         L.circleMarker(to, {
           radius: 5,
-          color: '#a78bfa',
-          fillColor: '#a78bfa',
-          fillOpacity: 0.5,
-          weight: 1,
+          color: '#8b5cf6',
+          fillColor: '#c4b5fd',
+          fillOpacity: 0.7,
+          weight: 2,
         })
-          .bindPopup(`Day trip: ${day.dayTripDestination}`)
+          .bindPopup(`<strong>Day trip:</strong> ${day.dayTripDestination}`)
           .addTo(map.value!)
       }
     }
 
-    // Fit bounds
-    if (coords.length > 0) {
-      const bounds = L.latLngBounds(coords as L.LatLngTuple[])
-      map.value!.fitBounds(bounds.pad(0.15))
+    // Circle markers for each stop (on top)
+    for (const g of groups) {
+      const [lat, lng] = g.coordinates
+      const color = getMarkerColor(g.location)
+      const radius = Math.max(10, Math.min(22, g.nights * 4 + 2))
+
+      // White border ring
+      L.circleMarker([lat, lng], {
+        radius: radius + 3,
+        color: '#ffffff',
+        fillColor: '#ffffff',
+        fillOpacity: 0.9,
+        weight: 0,
+      }).addTo(map.value!)
+
+      // Colored marker
+      const marker = L.circleMarker([lat, lng], {
+        radius,
+        color: '#ffffff',
+        fillColor: color,
+        fillOpacity: 0.85,
+        weight: 2,
+      }).addTo(map.value!)
+
+      marker.bindPopup(`
+        <div style="text-align:center;min-width:120px;">
+          <strong style="font-size:14px;">${g.location}</strong><br/>
+          <span style="color:#666;">${g.nights} night${g.nights > 1 ? 's' : ''}</span><br/>
+          <span style="color:#999;font-size:12px;">${formatDateRange(g.startDate, g.endDate)}</span>
+        </div>
+      `)
+
+      allCoords.push([lat, lng])
+    }
+
+    // Fit bounds including day trips
+    const boundsCoords = [...allCoords, ...dayTripCoords]
+    if (boundsCoords.length > 0) {
+      const bounds = L.latLngBounds(boundsCoords)
+      map.value!.fitBounds(bounds.pad(0.12))
     }
   }
 
-  onMounted(() => {
+  onMounted(async () => {
     if (!container.value) return
     map.value = L.map(container.value, {
       center: [36.5, 137.0],
       zoom: 6,
       zoomControl: true,
+      scrollWheelZoom: true,
     })
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 18,
     }).addTo(map.value)
 
-    render()
+    // Let the container settle, then fix tile rendering
+    await nextTick()
+    setTimeout(() => {
+      map.value?.invalidateSize()
+      render()
+    }, 150)
   })
 
   watch([stopGroups, days], () => render(), { deep: true })

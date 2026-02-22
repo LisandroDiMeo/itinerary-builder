@@ -5,6 +5,7 @@ import { formatDate, getDayNumber } from '@/utils/dates'
 import ActivityItem from './ActivityItem.vue'
 import ActivityForm from './ActivityForm.vue'
 import VariationTabs from './VariationTabs.vue'
+import LocationEditor from './LocationEditor.vue'
 import Badge from '@/components/shared/Badge.vue'
 
 const props = defineProps<{
@@ -69,6 +70,15 @@ function saveTitle() {
           {{ day.variations.length }} variation{{ day.variations.length > 1 ? 's' : '' }}
         </Badge>
       </div>
+    </div>
+
+    <!-- Location Editor -->
+    <div class="mb-2">
+      <LocationEditor
+        :location="day.location"
+        :coordinates="day.coordinates"
+        @update="(loc, coords) => emit('updateDay', day.date, { location: loc, coordinates: coords })"
+      />
     </div>
 
     <!-- Title -->
