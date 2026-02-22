@@ -5,11 +5,13 @@ import { useItineraryStore } from '@/stores/itinerary'
 import { useUiStore } from '@/stores/ui'
 import { useItineraryHelpers } from '@/composables/useItinerary'
 import type { ItineraryDay, Activity } from '@/types'
+import { downloadJson } from '@/utils/file'
 import ItineraryHeader from '@/components/itinerary/ItineraryHeader.vue'
 import StopGroup from '@/components/itinerary/StopGroup.vue'
 import DateRangeSelector from '@/components/itinerary/DateRangeSelector.vue'
 import TransferModal from '@/components/transfer/TransferModal.vue'
 import ItineraryMap from '@/components/map/ItineraryMap.vue'
+import ConfirmDialog from '@/components/shared/ConfirmDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -76,6 +78,31 @@ function handleRemoveVariation(date: string, variationId: string) {
   store.removeVariation(itineraryId.value, date, variationId)
 }
 
+function handleExport() {
+  const json = store.exportItinerary(itineraryId.value)
+  if (!json) return
+  const it = itinerary.value
+  const filename = `${(it?.name || 'itinerary').replace(/\s+/g, '-').toLowerCase()}.json`
+  downloadJson(json, filename)
+}
+
+function handleInsertDay(afterDate: string) {
+  store.insertDay(itineraryId.value, afterDate)
+}
+
+const deleteDayTarget = ref<string | null>(null)
+
+function handleDeleteDay(date: string) {
+  deleteDayTarget.value = date
+}
+
+function doDeleteDay() {
+  if (deleteDayTarget.value) {
+    store.removeDay(itineraryId.value, deleteDayTarget.value)
+    deleteDayTarget.value = null
+  }
+}
+
 // Redirect if not found
 if (!itinerary.value) {
   router.replace('/')
@@ -88,6 +115,7 @@ if (!itinerary.value) {
       :itinerary="itinerary"
       :is-selecting="ui.isSelectingRange"
       @toggle-selection="toggleSelection"
+      @export="handleExport"
     />
 
     <!-- Two-column layout -->
@@ -108,6 +136,8 @@ if (!itinerary.value) {
           @remove-activity="handleRemoveActivity"
           @update-day="handleUpdateDay"
           @remove-variation="handleRemoveVariation"
+          @insert-day="handleInsertDay"
+          @delete-day="handleDeleteDay"
         />
       </div>
 
@@ -139,6 +169,17 @@ if (!itinerary.value) {
       :end-date="ui.rangeEnd || ''"
       @close="ui.showTransferModal = false"
       @transfer="handleTransfer"
+    />
+
+    <!-- Delete Day Confirmation -->
+    <ConfirmDialog
+      :show="!!deleteDayTarget"
+      title="Delete Day"
+      message="Are you sure you want to delete this day? Subsequent days will shift back by one day."
+      confirm-text="Delete Day"
+      :danger="true"
+      @confirm="doDeleteDay"
+      @cancel="deleteDayTarget = null"
     />
   </div>
 </template>

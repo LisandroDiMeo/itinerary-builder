@@ -164,6 +164,62 @@ export const useItineraryStore = defineStore('itinerary', () => {
     target.updatedAt = new Date().toISOString()
   }
 
+  function insertDay(itineraryId: string, afterDate: string) {
+    const it = getById(itineraryId)
+    if (!it) return
+    const afterIdx = it.days.findIndex(d => d.date === afterDate)
+    if (afterIdx === -1) return
+
+    const afterDay = it.days[afterIdx]!
+    // Compute new date = afterDate + 1 day
+    const newDateObj = new Date(afterDate + 'T00:00:00')
+    newDateObj.setDate(newDateObj.getDate() + 1)
+    const newDateStr = newDateObj.toISOString().slice(0, 10)
+
+    // Shift all subsequent days (those at or after newDateStr) forward by 1 day
+    for (let i = it.days.length - 1; i > afterIdx; i--) {
+      const day = it.days[i]!
+      const d = new Date(day.date + 'T00:00:00')
+      d.setDate(d.getDate() + 1)
+      day.date = d.toISOString().slice(0, 10)
+    }
+
+    const newDay: ItineraryDay = {
+      date: newDateStr,
+      location: afterDay.location,
+      coordinates: [...afterDay.coordinates] as [number, number],
+      title: `New Day`,
+      accommodation: null,
+      activities: [],
+      isDayTrip: null,
+      dayTripDestination: null,
+      dayTripCoordinates: null,
+      variations: [],
+    }
+
+    it.days.splice(afterIdx + 1, 0, newDay)
+    it.updatedAt = new Date().toISOString()
+  }
+
+  function removeDay(itineraryId: string, date: string) {
+    const it = getById(itineraryId)
+    if (!it) return
+    const idx = it.days.findIndex(d => d.date === date)
+    if (idx === -1) return
+
+    it.days.splice(idx, 1)
+
+    // Shift subsequent days back by 1 day
+    for (let i = idx; i < it.days.length; i++) {
+      const day = it.days[i]!
+      const d = new Date(day.date + 'T00:00:00')
+      d.setDate(d.getDate() - 1)
+      day.date = d.toISOString().slice(0, 10)
+    }
+
+    it.updatedAt = new Date().toISOString()
+  }
+
   function removeVariation(itineraryId: string, date: string, variationId: string) {
     const it = getById(itineraryId)
     if (!it) return
@@ -171,6 +227,47 @@ export const useItineraryStore = defineStore('itinerary', () => {
     if (!day) return
     day.variations = day.variations.filter(v => v.id !== variationId)
     it.updatedAt = new Date().toISOString()
+  }
+
+  function exportItinerary(id: string): string | undefined {
+    const it = getById(id)
+    if (!it) return
+    return JSON.stringify(it, null, 2)
+  }
+
+  function importItinerary(json: string): Itinerary {
+    const data = JSON.parse(json)
+    // Validate required fields
+    if (!data || typeof data !== 'object') throw new Error('Invalid JSON: not an object')
+    if (!data.name || typeof data.name !== 'string') throw new Error('Invalid itinerary: missing name')
+    if (!Array.isArray(data.days)) throw new Error('Invalid itinerary: missing days array')
+    for (const day of data.days) {
+      if (!day.date || typeof day.date !== 'string') throw new Error('Invalid day: missing date')
+      if (!day.location || typeof day.location !== 'string') throw new Error('Invalid day: missing location')
+      if (!Array.isArray(day.coordinates) || day.coordinates.length !== 2) throw new Error('Invalid day: missing coordinates')
+    }
+    // Assign new ID and timestamps
+    const it: Itinerary = {
+      ...data,
+      id: generateId(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    // Ensure all days have required fields with defaults
+    it.days = it.days.map((d: any) => ({
+      date: d.date,
+      location: d.location,
+      coordinates: d.coordinates,
+      title: d.title || 'Untitled',
+      accommodation: d.accommodation || null,
+      activities: Array.isArray(d.activities) ? d.activities : [],
+      isDayTrip: d.isDayTrip ?? null,
+      dayTripDestination: d.dayTripDestination ?? null,
+      dayTripCoordinates: d.dayTripCoordinates ?? null,
+      variations: Array.isArray(d.variations) ? d.variations : [],
+    }))
+    itineraries.value.push(it)
+    return it
   }
 
   return {
@@ -185,6 +282,10 @@ export const useItineraryStore = defineStore('itinerary', () => {
     updateActivity,
     removeActivity,
     transferDays,
+    insertDay,
+    removeDay,
     removeVariation,
+    exportItinerary,
+    importItinerary,
   }
 })

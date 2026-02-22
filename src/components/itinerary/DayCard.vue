@@ -6,6 +6,7 @@ import ActivityItem from './ActivityItem.vue'
 import ActivityForm from './ActivityForm.vue'
 import VariationTabs from './VariationTabs.vue'
 import LocationEditor from './LocationEditor.vue'
+import DayTripEditor from './DayTripEditor.vue'
 import Badge from '@/components/shared/Badge.vue'
 
 const props = defineProps<{
@@ -23,6 +24,7 @@ const emit = defineEmits<{
   removeActivity: [date: string, activityId: string]
   updateDay: [date: string, updates: Partial<ItineraryDay>]
   removeVariation: [date: string, variationId: string]
+  deleteDay: [date: string]
 }>()
 
 const editingTitle = ref(false)
@@ -51,7 +53,7 @@ function saveTitle() {
 
 <template>
   <div
-    class="bg-white rounded-lg border p-4 transition-all"
+    class="group/card bg-white rounded-lg border p-4 transition-all"
     :class="[
       isSelected ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200',
       isSelecting ? 'cursor-pointer hover:border-blue-300' : ''
@@ -63,13 +65,23 @@ function saveTitle() {
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold text-gray-400 uppercase">Day {{ dayNum }}</span>
         <span class="text-xs text-gray-400">{{ formattedDate }}</span>
-        <Badge v-if="day.isDayTrip" color="bg-violet-100 text-violet-700">
-          🚃 Day Trip: {{ day.dayTripDestination }}
-        </Badge>
+        <DayTripEditor
+          :is-day-trip="day.isDayTrip"
+          :day-trip-destination="day.dayTripDestination"
+          :day-trip-coordinates="day.dayTripCoordinates"
+          @update="(isDT, dest, coords) => emit('updateDay', day.date, { isDayTrip: isDT, dayTripDestination: dest, dayTripCoordinates: coords })"
+        />
         <Badge v-if="day.variations.length > 0" color="bg-amber-100 text-amber-700">
           {{ day.variations.length }} variation{{ day.variations.length > 1 ? 's' : '' }}
         </Badge>
       </div>
+      <button
+        @click.stop="emit('deleteDay', day.date)"
+        class="opacity-0 group-hover/card:opacity-100 transition-opacity text-gray-300 hover:text-red-500 cursor-pointer p-1"
+        title="Delete day"
+      >
+        🗑️
+      </button>
     </div>
 
     <!-- Location Editor -->

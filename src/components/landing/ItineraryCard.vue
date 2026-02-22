@@ -5,7 +5,7 @@ import { formatDateRange } from '@/utils/dates'
 import { getLocationColor } from '@/utils/colors'
 
 const props = defineProps<{ itinerary: Itinerary }>()
-const emit = defineEmits<{ duplicate: []; delete: []; update: [name: string, description: string] }>()
+const emit = defineEmits<{ duplicate: []; delete: []; update: [name: string, description: string]; export: [] }>()
 
 const editing = ref(false)
 const editName = ref('')
@@ -83,6 +83,9 @@ function saveEdit() {
         </button>
         <button @click.stop="emit('duplicate')" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" title="Duplicate">
           📋 Duplicate
+        </button>
+        <button @click.stop="emit('export')" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" title="Export JSON">
+          💾 Export
         </button>
         <button @click.stop="emit('delete')" class="text-xs text-red-400 hover:text-red-600 cursor-pointer" title="Delete">
           🗑️ Delete
