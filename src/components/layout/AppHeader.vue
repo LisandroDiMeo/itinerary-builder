@@ -9,8 +9,8 @@ const route = useRoute()
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-14">
         <router-link to="/" class="flex items-center gap-2 text-gray-900 no-underline">
-          <span class="text-xl">🗾</span>
-          <span class="font-bold text-lg">Japan 2026</span>
+          <span class="text-xl">✈️</span>
+          <span class="font-bold text-lg">Itinerary Builder</span>
         </router-link>
         <div v-if="route.name === 'itinerary'">
           <router-link

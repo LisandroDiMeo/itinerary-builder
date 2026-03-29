@@ -41,8 +41,8 @@ export type ActivityCategory =
 
 export interface DayVariation {
   id: string
-  sourceItineraryId: string
-  sourceItineraryName: string
+  sourceItineraryId: string | null
+  sourceItineraryName: string | null
   location: string
   coordinates: [number, number]
   title: string

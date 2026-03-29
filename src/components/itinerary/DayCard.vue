@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { ItineraryDay, Activity } from '@/types'
+import type { ItineraryDay, Activity, DayVariation } from '@/types'
 import { formatDate, getDayNumber } from '@/utils/dates'
 import ActivityItem from './ActivityItem.vue'
 import ActivityForm from './ActivityForm.vue'
@@ -18,17 +18,24 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  selectDay: [date: string]
+  selectDay: [date: string, shiftKey: boolean]
   addActivity: [date: string, activity: Omit<Activity, 'id'>]
   updateActivity: [date: string, activityId: string, updates: Partial<Activity>]
   removeActivity: [date: string, activityId: string]
   updateDay: [date: string, updates: Partial<ItineraryDay>]
   removeVariation: [date: string, variationId: string]
+  addVariation: [date: string]
+  promoteVariation: [date: string, variationId: string]
+  updateVariation: [date: string, variationId: string, updates: Partial<DayVariation>]
+  addVariationActivity: [date: string, variationId: string, activity: Omit<Activity, 'id'>]
+  updateVariationActivity: [date: string, variationId: string, activityId: string, updates: Partial<Activity>]
+  removeVariationActivity: [date: string, variationId: string, activityId: string]
   deleteDay: [date: string]
 }>()
 
 const editingTitle = ref(false)
 const editTitle = ref('')
+const activeVariationTab = ref('main')
 
 const dayNum = computed(() => getDayNumber(props.day.date, props.startDate))
 const formattedDate = computed(() => formatDate(props.day.date))
@@ -58,7 +65,7 @@ function saveTitle() {
       isSelected ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200',
       isSelecting ? 'cursor-pointer hover:border-blue-300' : ''
     ]"
-    @click="isSelecting ? emit('selectDay', day.date) : undefined"
+    @click="(e: MouseEvent) => isSelecting ? emit('selectDay', day.date, e.shiftKey) : undefined"
   >
     <!-- Header -->
     <div class="flex items-center justify-between mb-3">
@@ -117,11 +124,18 @@ function saveTitle() {
     <!-- Variation Tabs -->
     <VariationTabs
       :day="day"
+      v-model:active-tab="activeVariationTab"
       @remove-variation="(vId) => emit('removeVariation', day.date, vId)"
+      @add-variation="emit('addVariation', day.date)"
+      @promote-variation="(vId) => emit('promoteVariation', day.date, vId)"
+      @update-variation="(vId, u) => emit('updateVariation', day.date, vId, u)"
+      @add-variation-activity="(vId, act) => emit('addVariationActivity', day.date, vId, act)"
+      @update-variation-activity="(vId, aId, u) => emit('updateVariationActivity', day.date, vId, aId, u)"
+      @remove-variation-activity="(vId, aId) => emit('removeVariationActivity', day.date, vId, aId)"
     />
 
-    <!-- Activities (main, shown when no variation selected or main tab) -->
-    <div v-if="day.variations.length === 0 || true" class="space-y-2">
+    <!-- Activities (main, shown when main tab is active) -->
+    <div v-if="activeVariationTab === 'main'" class="space-y-2">
       <ActivityItem
         v-for="act in mainActivities"
         :key="act.id"
@@ -131,8 +145,8 @@ function saveTitle() {
       />
     </div>
 
-    <!-- Add Activity -->
-    <div class="mt-3">
+    <!-- Add Activity (only when main tab) -->
+    <div v-if="activeVariationTab === 'main'" class="mt-3">
       <ActivityForm @add="(act) => emit('addActivity', day.date, act)" />
     </div>
   </div>

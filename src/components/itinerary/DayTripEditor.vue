@@ -103,9 +103,10 @@ const canSave = computed(() => {
     <button
       v-else
       @click.stop="open"
-      class="text-xs text-gray-400 hover:text-violet-600 cursor-pointer transition-colors"
+      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border border-dashed border-gray-300 text-gray-400 hover:border-violet-400 hover:text-violet-600 cursor-pointer transition-colors"
+      title="Mark as day trip to another destination"
     >
-      + Day Trip
+      🚃 Day Trip
     </button>
   </template>
 

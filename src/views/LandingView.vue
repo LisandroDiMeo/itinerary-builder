@@ -53,7 +53,7 @@ function handleImport(json: string) {
     <div class="flex items-center justify-between mb-8">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">My Itineraries</h1>
-        <p class="text-sm text-gray-500 mt-1">Plan and compare your Japan trip options</p>
+        <p class="text-sm text-gray-500 mt-1">Plan and compare your trip options</p>
       </div>
       <div class="flex items-center gap-2">
         <button
@@ -72,9 +72,9 @@ function handleImport(json: string) {
     </div>
 
     <div v-if="store.itineraries.length === 0" class="text-center py-20 text-gray-400">
-      <p class="text-4xl mb-4">🗾</p>
+      <p class="text-4xl mb-4">✈️</p>
       <p class="text-lg">No itineraries yet</p>
-      <p class="text-sm">Create your first Japan itinerary to get started</p>
+      <p class="text-sm">Create your first itinerary to get started</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -7,8 +7,8 @@ const emit = defineEmits<{ close: []; create: [name: string, description: string
 
 const name = ref('')
 const description = ref('')
-const startDate = ref('2026-12-03')
-const endDate = ref('2026-12-28')
+const startDate = ref('')
+const endDate = ref('')
 
 function submit() {
   if (!name.value.trim() || !startDate.value || !endDate.value) return
@@ -26,7 +26,7 @@ function submit() {
         <input
           v-model="name"
           type="text"
-          placeholder="e.g. Japan Alternative Plan"
+          placeholder="e.g. Summer Europe Trip"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>

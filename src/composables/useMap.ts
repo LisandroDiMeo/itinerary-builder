@@ -135,8 +135,8 @@ export function useMap(
   onMounted(async () => {
     if (!container.value) return
     mapInstance = L.map(container.value, {
-      center: [36.5, 137.0],
-      zoom: 6,
+      center: [20, 0],
+      zoom: 2,
       zoomControl: true,
       scrollWheelZoom: true,
     })

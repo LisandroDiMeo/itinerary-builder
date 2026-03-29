@@ -40,3 +40,19 @@ export function getDayOfWeek(dateStr: string): string {
 export function getDayNumber(dateStr: string, startDate: string): number {
   return daysBetween(startDate, dateStr) + 1
 }
+
+export function recalculateDateRanges(
+  startDate: string,
+  groupDayCounts: number[]
+): { startDate: string; endDate: string }[] {
+  const result: { startDate: string; endDate: string }[] = []
+  const cursor = new Date(startDate + 'T00:00:00')
+  for (const count of groupDayCounts) {
+    const groupStart = cursor.toISOString().slice(0, 10)
+    cursor.setDate(cursor.getDate() + count - 1)
+    const groupEnd = cursor.toISOString().slice(0, 10)
+    result.push({ startDate: groupStart, endDate: groupEnd })
+    cursor.setDate(cursor.getDate() + 1)
+  }
+  return result
+}

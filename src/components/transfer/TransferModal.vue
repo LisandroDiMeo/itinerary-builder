@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useItineraryStore } from '@/stores/itinerary'
-import { formatDate, daysBetween } from '@/utils/dates'
 import BaseModal from '@/components/shared/BaseModal.vue'
 
 const props = defineProps<{
   show: boolean
   sourceId: string
-  startDate: string
-  endDate: string
+  dates: string[]
 }>()
 
 const emit = defineEmits<{ close: []; transfer: [targetId: string] }>()
@@ -18,17 +16,13 @@ const store = useItineraryStore()
 const targets = computed(() =>
   store.itineraries.filter(it => it.id !== props.sourceId)
 )
-
-const dayCount = computed(() =>
-  props.startDate && props.endDate ? daysBetween(props.startDate, props.endDate) + 1 : 0
-)
 </script>
 
 <template>
   <BaseModal :show="show" title="Transfer Days" @close="emit('close')">
     <div class="space-y-4">
       <p class="text-sm text-gray-600">
-        Transfer {{ dayCount }} days ({{ formatDate(startDate) }} → {{ formatDate(endDate) }}) to another itinerary.
+        Transfer {{ dates.length }} day{{ dates.length !== 1 ? 's' : '' }} to another itinerary.
         If the target already has plans for those dates, they'll be added as variations.
       </p>
 

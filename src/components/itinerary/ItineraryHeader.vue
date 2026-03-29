@@ -49,7 +49,7 @@ const locationCount = computed(() => {
             ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
         >
-          {{ isSelecting ? 'Cancel Selection' : 'Select Date Range' }}
+          {{ isSelecting ? 'Cancel Selection' : 'Select Days' }}
         </button>
       </div>
     </div>

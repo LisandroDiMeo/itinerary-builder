@@ -1,56 +1,66 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 export const useUiStore = defineStore('ui', () => {
-  const isSelectingRange = ref(false)
-  const rangeStart = ref<string | null>(null)
-  const rangeEnd = ref<string | null>(null)
+  const isSelecting = ref(false)
+  const selectedDates = ref(new Set<string>())
+  const lastSelectedDate = ref<string | null>(null)
   const showTransferModal = ref(false)
   const showCreateModal = ref(false)
 
-  function startRangeSelection() {
-    isSelectingRange.value = true
-    rangeStart.value = null
-    rangeEnd.value = null
+  function startSelection() {
+    isSelecting.value = true
+    selectedDates.value = new Set()
+    lastSelectedDate.value = null
   }
 
-  function selectDate(date: string) {
-    if (!rangeStart.value) {
-      rangeStart.value = date
-    } else if (!rangeEnd.value) {
-      if (date < rangeStart.value) {
-        rangeEnd.value = rangeStart.value
-        rangeStart.value = date
-      } else {
-        rangeEnd.value = date
-      }
+  function toggleDate(date: string) {
+    const s = new Set(selectedDates.value)
+    if (s.has(date)) {
+      s.delete(date)
     } else {
-      rangeStart.value = date
-      rangeEnd.value = null
+      s.add(date)
+    }
+    selectedDates.value = s
+    lastSelectedDate.value = date
+  }
+
+  function selectDateRange(dates: string[]) {
+    const s = new Set(selectedDates.value)
+    for (const d of dates) {
+      s.add(d)
+    }
+    selectedDates.value = s
+    if (dates.length > 0) {
+      lastSelectedDate.value = dates[dates.length - 1]!
     }
   }
 
   function cancelSelection() {
-    isSelectingRange.value = false
-    rangeStart.value = null
-    rangeEnd.value = null
+    isSelecting.value = false
+    selectedDates.value = new Set()
+    lastSelectedDate.value = null
   }
 
-  function isDateInSelection(date: string): boolean {
-    if (!rangeStart.value) return false
-    if (!rangeEnd.value) return date === rangeStart.value
-    return date >= rangeStart.value && date <= rangeEnd.value
+  function isDateSelected(date: string): boolean {
+    return selectedDates.value.has(date)
   }
+
+  const selectedCount = computed(() => selectedDates.value.size)
+  const hasSelection = computed(() => selectedDates.value.size > 0)
 
   return {
-    isSelectingRange,
-    rangeStart,
-    rangeEnd,
+    isSelecting,
+    selectedDates,
+    lastSelectedDate,
     showTransferModal,
     showCreateModal,
-    startRangeSelection,
-    selectDate,
+    startSelection,
+    toggleDate,
+    selectDateRange,
     cancelSelection,
-    isDateInSelection,
+    isDateSelected,
+    selectedCount,
+    hasSelection,
   }
 })

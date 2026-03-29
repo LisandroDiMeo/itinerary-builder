@@ -4,7 +4,19 @@ export interface PresetLocation {
 }
 
 export const presetLocations: PresetLocation[] = [
-  // Major cities
+  // Worldwide
+  { name: 'Paris', coordinates: [48.8566, 2.3522] },
+  { name: 'London', coordinates: [51.5074, -0.1278] },
+  { name: 'New York', coordinates: [40.7128, -74.0060] },
+  { name: 'Rome', coordinates: [41.9028, 12.4964] },
+  { name: 'Barcelona', coordinates: [41.3874, 2.1686] },
+  { name: 'Bangkok', coordinates: [13.7563, 100.5018] },
+  { name: 'Sydney', coordinates: [-33.8688, 151.2093] },
+  { name: 'Istanbul', coordinates: [41.0082, 28.9784] },
+  { name: 'Dubai', coordinates: [25.2048, 55.2708] },
+  { name: 'Seoul', coordinates: [37.5665, 126.9780] },
+
+  // Japan
   { name: 'Tokyo', coordinates: [35.6762, 139.6503] },
   { name: 'Kyoto', coordinates: [35.0116, 135.7681] },
   { name: 'Osaka', coordinates: [34.6937, 135.5023] },

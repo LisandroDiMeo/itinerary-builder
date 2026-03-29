@@ -1,5 +1,5 @@
 {
-  "name": "japan-itinerary",
+  "name": "itinerary-builder",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,14 +11,18 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.2.0",
     "@types/leaflet": "^1.9.21",
+    "@vueuse/core": "^14.2.1",
+    "@vueuse/integrations": "^14.2.1",
     "leaflet": "^1.9.4",
     "pinia": "^3.0.4",
+    "sortablejs": "^1.15.7",
     "tailwindcss": "^4.2.0",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "@types/sortablejs": "^1.15.9",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vue/tsconfig": "^0.8.1",
     "typescript": "~5.9.3",
