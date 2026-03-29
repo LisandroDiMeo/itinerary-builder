@@ -25,7 +25,7 @@ const locationCount = computed(() => {
 
 <template>
   <div class="mb-6">
-    <div class="flex items-start justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">{{ itinerary.name }}</h1>
         <p v-if="itinerary.description" class="text-sm text-gray-500 mt-1">{{ itinerary.description }}</p>
@@ -38,13 +38,13 @@ const locationCount = computed(() => {
       <div class="flex items-center gap-2">
         <button
           @click="emit('export')"
-          class="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
+          class="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 whitespace-nowrap"
         >
           💾 Export JSON
         </button>
         <button
           @click="emit('toggleSelection')"
-          class="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors"
+          class="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors whitespace-nowrap"
           :class="isSelecting
             ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
