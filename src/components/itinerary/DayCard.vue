@@ -84,7 +84,7 @@ function saveTitle() {
       </div>
       <button
         @click.stop="emit('deleteDay', day.date)"
-        class="opacity-0 group-hover/card:opacity-100 transition-opacity text-gray-300 hover:text-red-500 cursor-pointer p-1"
+        class="opacity-100 lg:opacity-0 lg:group-hover/card:opacity-100 transition-opacity text-gray-300 hover:text-red-500 cursor-pointer p-1"
         title="Delete day"
       >
         🗑️

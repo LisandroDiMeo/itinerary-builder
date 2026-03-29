@@ -88,7 +88,7 @@ function save() {
       </div>
       <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{{ activity.description }}</p>
     </div>
-    <div v-if="!readonly" class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+    <div v-if="!readonly" class="flex-shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex gap-1">
       <button @click.stop="startEdit" class="text-xs text-gray-400 hover:text-blue-600 cursor-pointer" title="Edit">✏️</button>
       <button @click.stop="emit('remove')" class="text-xs text-gray-400 hover:text-red-600 cursor-pointer" title="Remove">🗑️</button>
     </div>

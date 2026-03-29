@@ -53,7 +53,7 @@ const sortedVariationActivities = computed(() => {
         <span
           v-if="day.variations.length > 0"
           @click.stop="emit('promoteVariation', day.variations[0]!.id)"
-          class="text-gray-400 hover:text-red-500 ml-0.5 hidden group-hover/tab:inline"
+          class="text-gray-400 hover:text-red-500 ml-0.5 inline lg:hidden lg:group-hover/tab:inline"
           title="Remove main and promote first variation"
         >&times;</span>
       </button>
@@ -67,12 +67,12 @@ const sortedVariationActivities = computed(() => {
         {{ v.sourceItineraryName || 'Manual' }}
         <span
           @click.stop="emit('promoteVariation', v.id)"
-          class="text-gray-400 hover:text-blue-500 hidden group-hover/tab:inline"
+          class="text-gray-400 hover:text-blue-500 inline lg:hidden lg:group-hover/tab:inline"
           title="Promote to main"
         >&#8593;</span>
         <span
           @click.stop="emit('removeVariation', v.id)"
-          class="text-gray-400 hover:text-red-500 hidden group-hover/tab:inline"
+          class="text-gray-400 hover:text-red-500 inline lg:hidden lg:group-hover/tab:inline"
           title="Remove variation"
         >&times;</span>
       </button>
