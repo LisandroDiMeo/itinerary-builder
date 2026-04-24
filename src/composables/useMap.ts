@@ -1,4 +1,5 @@
 import { onMounted, onUnmounted, watch, nextTick, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import L from 'leaflet'
 import type { StopGroup, ItineraryDay } from '@/types'
 import { getMarkerColor } from '@/utils/colors'
@@ -17,6 +18,7 @@ export function useMap(
   stopGroups: Ref<StopGroup[]>,
   days: Ref<ItineraryDay[]>
 ) {
+  const { t, locale } = useI18n()
   let mapInstance: L.Map | null = null
 
   function render() {
@@ -84,7 +86,7 @@ export function useMap(
           fillOpacity: 0.7,
           weight: 2,
         })
-          .bindPopup(`<strong>Day trip:</strong> ${day.dayTripDestination}`)
+          .bindPopup(t('day.dayTripPopup', { destination: day.dayTripDestination ?? '' }))
           .addTo(m)
       }
     }
@@ -116,7 +118,7 @@ export function useMap(
       marker.bindPopup(`
         <div style="text-align:center;min-width:120px;">
           <strong style="font-size:14px;">${g.location}</strong><br/>
-          <span style="color:#666;">${g.nights} night${g.nights > 1 ? 's' : ''}</span><br/>
+          <span style="color:#666;">${t('stopGroup.nights', { count: g.nights }, g.nights)}</span><br/>
           <span style="color:#999;font-size:12px;">${formatDateRange(g.startDate, g.endDate)}</span>
         </div>
       `)
@@ -154,6 +156,7 @@ export function useMap(
   })
 
   watch([stopGroups, days], () => render(), { deep: true })
+  watch(locale, () => render())
 
   onUnmounted(() => {
     mapInstance?.remove()

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{ selectedCount: number }>()
 defineEmits<{
@@ -10,6 +11,7 @@ defineEmits<{
   cancel: []
 }>()
 
+const { t } = useI18n()
 const expanded = ref(false)
 </script>
 
@@ -17,39 +19,39 @@ const expanded = ref(false)
   <!-- Desktop: horizontal floating bar -->
   <div class="hidden sm:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white border border-blue-200 rounded-xl shadow-lg px-6 py-3 items-center gap-3">
     <div class="text-sm font-medium text-gray-700 whitespace-nowrap">
-      {{ selectedCount }} day{{ selectedCount !== 1 ? 's' : '' }} selected
+      {{ t('multiSelect.selected', { count: selectedCount }, selectedCount) }}
     </div>
     <div class="h-5 w-px bg-gray-200" />
     <button
       @click="$emit('transfer')"
       class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
     >
-      Transfer
+      {{ t('multiSelect.transfer') }}
     </button>
     <button
       @click="$emit('create')"
       class="px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 cursor-pointer transition-colors"
     >
-      Create Itinerary
+      {{ t('multiSelect.createItinerary') }}
     </button>
     <button
       @click="$emit('clean')"
       class="px-3 py-1.5 text-xs font-medium text-white bg-amber-500 rounded-lg hover:bg-amber-600 cursor-pointer transition-colors"
     >
-      Clean
+      {{ t('multiSelect.clean') }}
     </button>
     <button
       @click="$emit('remove')"
       class="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer transition-colors"
     >
-      Remove
+      {{ t('multiSelect.remove') }}
     </button>
     <div class="h-5 w-px bg-gray-200" />
     <button
       @click="$emit('cancel')"
       class="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
     >
-      Cancel
+      {{ t('common.cancel') }}
     </button>
   </div>
 
@@ -67,7 +69,7 @@ const expanded = ref(false)
       <div v-if="expanded" class="flex flex-col items-end gap-2 mb-1">
         <!-- Count badge -->
         <div class="px-3 py-1.5 bg-white border border-gray-200 rounded-full shadow text-xs font-medium text-gray-700">
-          {{ selectedCount }} day{{ selectedCount !== 1 ? 's' : '' }}
+          {{ t('multiSelect.selectedShort', { count: selectedCount }, selectedCount) }}
         </div>
 
         <button
@@ -75,7 +77,7 @@ const expanded = ref(false)
           class="flex items-center gap-2 pl-3 pr-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-full shadow-lg active:bg-blue-700 cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          Transfer
+          {{ t('multiSelect.transfer') }}
         </button>
 
         <button
@@ -83,7 +85,7 @@ const expanded = ref(false)
           class="flex items-center gap-2 pl-3 pr-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-full shadow-lg active:bg-emerald-700 cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-          Create Itinerary
+          {{ t('multiSelect.createItinerary') }}
         </button>
 
         <button
@@ -91,7 +93,7 @@ const expanded = ref(false)
           class="flex items-center gap-2 pl-3 pr-4 py-2.5 bg-amber-500 text-white text-sm font-medium rounded-full shadow-lg active:bg-amber-600 cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/></svg>
-          Clean
+          {{ t('multiSelect.clean') }}
         </button>
 
         <button
@@ -99,7 +101,7 @@ const expanded = ref(false)
           class="flex items-center gap-2 pl-3 pr-4 py-2.5 bg-red-600 text-white text-sm font-medium rounded-full shadow-lg active:bg-red-700 cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4h8v2"/></svg>
-          Remove
+          {{ t('multiSelect.remove') }}
         </button>
 
         <button
@@ -107,7 +109,7 @@ const expanded = ref(false)
           class="flex items-center gap-2 pl-3 pr-4 py-2.5 bg-white text-gray-600 text-sm font-medium rounded-full shadow-lg border border-gray-200 active:bg-gray-50 cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-          Cancel
+          {{ t('common.cancel') }}
         </button>
       </div>
     </Transition>

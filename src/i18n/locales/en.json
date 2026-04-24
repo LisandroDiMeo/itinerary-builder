@@ -1,0 +1,197 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "duplicate": "Duplicate",
+    "remove": "Remove",
+    "confirm": "Confirm",
+    "import": "Import",
+    "export": "Export",
+    "noDates": "No dates",
+    "days": "days",
+    "locations": "locations"
+  },
+  "header": {
+    "title": "Itinerary Builder",
+    "allItineraries": "All Itineraries",
+    "language": "Language"
+  },
+  "landing": {
+    "title": "My Itineraries",
+    "subtitle": "Plan and compare your trip options",
+    "import": "📥 Import",
+    "newItinerary": "+ New Itinerary",
+    "emptyTitle": "No itineraries yet",
+    "emptySubtitle": "Create your first itinerary to get started",
+    "deleteTitle": "Delete Itinerary",
+    "deleteMessage": "Are you sure you want to delete this itinerary? This action cannot be undone."
+  },
+  "itineraryCard": {
+    "edit": "✏️ Edit",
+    "duplicate": "📋 Duplicate",
+    "export": "💾 Export",
+    "delete": "🗑️ Delete",
+    "more": "+ {n} more"
+  },
+  "createItinerary": {
+    "title": "Create New Itinerary",
+    "name": "Name",
+    "namePlaceholder": "e.g. Summer Europe Trip",
+    "description": "Description",
+    "descriptionPlaceholder": "Brief description...",
+    "startDate": "Start Date",
+    "endDate": "End Date"
+  },
+  "importItinerary": {
+    "title": "Import Itinerary",
+    "description": "Upload a JSON file previously exported from this app. The file should contain an itinerary with {name}, {days} array, and each day should have {date}, {location}, and {coordinates}.",
+    "selectFile": "Select JSON file",
+    "errors": {
+      "readFile": "Failed to read file",
+      "notObject": "Not a valid JSON object",
+      "missingName": "Missing itinerary name",
+      "missingDays": "Missing or empty days array",
+      "dayMissingFields": "Each day must have date and location",
+      "invalidFormat": "Invalid JSON format"
+    }
+  },
+  "itineraryHeader": {
+    "exportJson": "💾 Export JSON",
+    "selectDays": "Select Days",
+    "cancelSelection": "Cancel Selection"
+  },
+  "day": {
+    "dayNumber": "Day {n}",
+    "variations": "{count} variation | {count} variations",
+    "deleteTooltip": "Delete day",
+    "addDay": "+ Add Day",
+    "addMultiple": "+ Add Multiple",
+    "titleEditSave": "Save",
+    "titleEditCancel": "Cancel",
+    "dayTripPopup": "<strong>Day trip:</strong> {destination}"
+  },
+  "dayTrip": {
+    "prefix": "🚃 Day Trip: {destination}",
+    "badge": "🚃 Day Trip",
+    "editTooltip": "Edit day trip",
+    "markTooltip": "Mark as day trip to another destination",
+    "toggleLabel": "Day trip from this location",
+    "save": "Save Day Trip",
+    "remove": "Remove Day Trip"
+  },
+  "activity": {
+    "add": "+ Add Activity",
+    "titlePlaceholder": "Activity title",
+    "descriptionPlaceholder": "Description",
+    "time": {
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "allDay": "All Day"
+    },
+    "category": {
+      "sightseeing": "Sightseeing",
+      "food": "Food",
+      "transport": "Transport",
+      "shopping": "Shopping",
+      "nature": "Nature",
+      "culture": "Culture",
+      "onsen": "Onsen",
+      "nightlife": "Nightlife",
+      "other": "Other"
+    },
+    "editTooltip": "Edit",
+    "removeTooltip": "Remove"
+  },
+  "variations": {
+    "mainPlan": "Main Plan",
+    "manual": "Manual",
+    "promoteMain": "Remove main and promote first variation",
+    "promoteTooltip": "Promote to main",
+    "removeTooltip": "Remove variation",
+    "add": "+ Add Variation",
+    "addTooltip": "Add an alternative plan for this day",
+    "addManualTooltip": "Add a manual variation",
+    "fromSource": "From \"{name}\"",
+    "manualLabel": "Manual variation"
+  },
+  "location": {
+    "presetCity": "Preset City",
+    "customLocation": "Custom Location",
+    "searchCities": "Search cities...",
+    "searchDestinations": "Search destinations...",
+    "noMatches": "No matches — try Custom Location",
+    "destinationName": "Destination name",
+    "locationName": "Location name",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "changeTooltip": "Change location",
+    "updateButton": "Update Location"
+  },
+  "transfer": {
+    "title": "Transfer Days",
+    "description": "Transfer {count} day to another itinerary. If the target already has plans for those dates, they'll be added as variations. | Transfer {count} days to another itinerary. If the target already has plans for those dates, they'll be added as variations.",
+    "noTargets": "No other itineraries available.",
+    "createFirst": "Create another itinerary first to transfer days.",
+    "daysSuffix": "{count} day | {count} days"
+  },
+  "createFromDays": {
+    "title": "Create Itinerary from Selection",
+    "description": "Creating a new itinerary from {count} selected day, including any variations. | Creating a new itinerary from {count} selected days, including any variations.",
+    "name": "Itinerary Name",
+    "namePlaceholder": "e.g. Alternative Trip"
+  },
+  "addMultipleDays": {
+    "title": "Add Multiple Days",
+    "numberOfDays": "Number of days",
+    "location": "Location",
+    "titlePrefix": "Title prefix",
+    "titlePrefixOptional": "(optional)",
+    "titlePrefixPlaceholder": "e.g. Day in Rome",
+    "titlePrefixHint": "Days will be named \"{prefix1}\", \"{prefix2}\", etc.",
+    "submit": "Add {count} Day | Add {count} Days"
+  },
+  "confirm": {
+    "deleteDayTitle": "Delete Day",
+    "deleteDayMessage": "Are you sure you want to delete this day? Subsequent days will shift back by one day.",
+    "deleteDayConfirm": "Delete Day",
+    "removeDaysTitle": "Remove Selected Days",
+    "removeDaysMessage": "Remove {count} selected day? Remaining days will be re-dated sequentially. | Remove {count} selected days? Remaining days will be re-dated sequentially.",
+    "removeDaysConfirm": "Remove Days",
+    "cleanDaysTitle": "Clean Selected Days",
+    "cleanDaysMessage": "Clear all activities and variations from {count} selected day? The days will remain but their content will be removed. | Clear all activities and variations from {count} selected days? The days will remain but their content will be removed.",
+    "cleanDaysConfirm": "Clean Days"
+  },
+  "reorder": {
+    "title": "Reorder Locations",
+    "description": "Reordering locations will recalculate all dates. Here's how the schedule will change:",
+    "current": "Current",
+    "afterReorder": "After reorder",
+    "dontShowAgain": "Don't show this again",
+    "confirm": "Reorder"
+  },
+  "multiSelect": {
+    "selected": "{count} day selected | {count} days selected",
+    "selectedShort": "{count} day | {count} days",
+    "transfer": "Transfer",
+    "createItinerary": "Create Itinerary",
+    "clean": "Clean",
+    "remove": "Remove"
+  },
+  "stopGroup": {
+    "dragTooltip": "Drag to reorder",
+    "nights": "{count} night | {count} nights"
+  },
+  "defaults": {
+    "dayTitle": "Day {n}",
+    "newDay": "New Day",
+    "variationTitle": "Variation {n}",
+    "copySuffix": "{name} (Copy)",
+    "mainPlan": "Main Plan",
+    "untitled": "Untitled"
+  }
+}

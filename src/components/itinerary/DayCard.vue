@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ItineraryDay, Activity, DayVariation } from '@/types'
 import { formatDate, getDayNumber } from '@/utils/dates'
 import ActivityItem from './ActivityItem.vue'
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   deleteDay: [date: string]
 }>()
 
+const { t } = useI18n()
 const editingTitle = ref(false)
 const editTitle = ref('')
 const activeVariationTab = ref('main')
@@ -70,7 +72,7 @@ function saveTitle() {
     <!-- Header -->
     <div class="flex items-center justify-between mb-3">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-bold text-gray-400 uppercase">Day {{ dayNum }}</span>
+        <span class="text-xs font-bold text-gray-400 uppercase">{{ t('day.dayNumber', { n: dayNum }) }}</span>
         <span class="text-xs text-gray-400">{{ formattedDate }}</span>
         <DayTripEditor
           :is-day-trip="day.isDayTrip"
@@ -79,13 +81,13 @@ function saveTitle() {
           @update="(isDT, dest, coords) => emit('updateDay', day.date, { isDayTrip: isDT, dayTripDestination: dest, dayTripCoordinates: coords })"
         />
         <Badge v-if="day.variations.length > 0" color="bg-amber-100 text-amber-700">
-          {{ day.variations.length }} variation{{ day.variations.length > 1 ? 's' : '' }}
+          {{ t('day.variations', { count: day.variations.length }, day.variations.length) }}
         </Badge>
       </div>
       <button
         @click.stop="emit('deleteDay', day.date)"
         class="opacity-100 lg:opacity-0 lg:group-hover/card:opacity-100 transition-opacity text-gray-300 hover:text-red-500 cursor-pointer p-1"
-        title="Delete day"
+        :title="t('day.deleteTooltip')"
       >
         🗑️
       </button>
@@ -108,8 +110,8 @@ function saveTitle() {
           class="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           @keyup.enter="saveTitle"
         />
-        <button @click="saveTitle" class="text-xs text-blue-600 cursor-pointer">Save</button>
-        <button @click="editingTitle = false" class="text-xs text-gray-400 cursor-pointer">Cancel</button>
+        <button @click="saveTitle" class="text-xs text-blue-600 cursor-pointer">{{ t('common.save') }}</button>
+        <button @click="editingTitle = false" class="text-xs text-gray-400 cursor-pointer">{{ t('common.cancel') }}</button>
       </div>
       <h4
         v-else

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Itinerary } from '@/types'
 import { formatDateRange } from '@/utils/dates'
 
@@ -10,11 +11,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{ toggleSelection: []; export: [] }>()
 
+const { t } = useI18n()
+
 const dateRange = computed(() => {
-  if (props.itinerary.days.length === 0) return 'No dates'
+  if (props.itinerary.days.length === 0) return t('common.noDates')
   const first = props.itinerary.days[0]
   const last = props.itinerary.days[props.itinerary.days.length - 1]
-  if (!first || !last) return 'No dates'
+  if (!first || !last) return t('common.noDates')
   return formatDateRange(first.date, last.date)
 })
 
@@ -31,8 +34,8 @@ const locationCount = computed(() => {
         <p v-if="itinerary.description" class="text-sm text-gray-500 mt-1">{{ itinerary.description }}</p>
         <div class="flex items-center gap-3 mt-2 text-sm text-gray-500">
           <span>📅 {{ dateRange }}</span>
-          <span>{{ itinerary.days.length }} days</span>
-          <span>📍 {{ locationCount }} locations</span>
+          <span>{{ itinerary.days.length }} {{ t('common.days') }}</span>
+          <span>📍 {{ locationCount }} {{ t('common.locations') }}</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -40,7 +43,7 @@ const locationCount = computed(() => {
           @click="emit('export')"
           class="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 whitespace-nowrap"
         >
-          💾 Export JSON
+          {{ t('itineraryHeader.exportJson') }}
         </button>
         <button
           @click="emit('toggleSelection')"
@@ -49,7 +52,7 @@ const locationCount = computed(() => {
             ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
         >
-          {{ isSelecting ? 'Cancel Selection' : 'Select Days' }}
+          {{ isSelecting ? t('itineraryHeader.cancelSelection') : t('itineraryHeader.selectDays') }}
         </button>
       </div>
     </div>

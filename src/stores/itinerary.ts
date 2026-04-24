@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import type { Itinerary, ItineraryDay, Activity, DayVariation } from '@/types'
 import { seedItinerary } from '@/data/seed'
 import { generateId } from '@/utils/dates'
+import { t } from '@/i18n'
 
 const STORAGE_KEY = 'itinerary-builder-data'
 const OLD_STORAGE_KEY = 'japan-itineraries'
@@ -52,7 +53,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
         date: dateStr,
         location: 'TBD',
         coordinates: [20, 0],
-        title: `Day ${days.length + 1}`,
+        title: t('defaults.dayTitle', { n: days.length + 1 }),
         accommodation: null,
         activities: [],
         isDayTrip: null,
@@ -78,7 +79,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
     if (!source) return
     const copy: Itinerary = JSON.parse(JSON.stringify(source))
     copy.id = generateId()
-    copy.name = `${source.name} (Copy)`
+    copy.name = t('defaults.copySuffix', { name: source.name })
     copy.createdAt = new Date().toISOString()
     copy.updatedAt = new Date().toISOString()
     itineraries.value.push(copy)
@@ -196,7 +197,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
       date: newDateStr,
       location: afterDay.location,
       coordinates: [...afterDay.coordinates] as [number, number],
-      title: `New Day`,
+      title: t('defaults.newDay'),
       accommodation: null,
       activities: [],
       isDayTrip: null,
@@ -239,7 +240,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
         date: newDateObj.toISOString().slice(0, 10),
         location,
         coordinates: [...coordinates] as [number, number],
-        title: titlePrefix ? `${titlePrefix} ${n}` : 'New Day',
+        title: titlePrefix ? `${titlePrefix} ${n}` : t('defaults.newDay'),
         accommodation: null,
         activities: [],
         isDayTrip: null,
@@ -292,7 +293,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
       sourceItineraryName: null,
       location: day.location,
       coordinates: [...day.coordinates] as [number, number],
-      title: `Variation ${day.variations.length + 1}`,
+      title: t('defaults.variationTitle', { n: day.variations.length + 1 }),
       accommodation: null,
       activities: [],
       isDayTrip: null,
@@ -316,7 +317,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
     const oldMain: DayVariation = {
       id: generateId(),
       sourceItineraryId: null,
-      sourceItineraryName: 'Main Plan',
+      sourceItineraryName: t('defaults.mainPlan'),
       location: day.location,
       coordinates: [...day.coordinates] as [number, number],
       title: day.title,
@@ -554,7 +555,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
       date: d.date,
       location: d.location,
       coordinates: d.coordinates,
-      title: d.title || 'Untitled',
+      title: d.title || t('defaults.untitled'),
       accommodation: d.accommodation || null,
       activities: Array.isArray(d.activities) ? d.activities : [],
       isDayTrip: d.isDayTrip ?? null,

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Itinerary } from '@/types'
 import { formatDateRange } from '@/utils/dates'
 import { getLocationColor } from '@/utils/colors'
 
 const props = defineProps<{ itinerary: Itinerary }>()
 const emit = defineEmits<{ duplicate: []; delete: []; update: [name: string, description: string]; export: [] }>()
+
+const { t } = useI18n()
 
 const editing = ref(false)
 const editName = ref('')
@@ -16,10 +19,10 @@ const borderColor = computed(() => getLocationColor(firstLocation.value).border)
 
 const dateRange = computed(() => {
   const days = props.itinerary.days
-  if (days.length === 0) return 'No dates'
+  if (days.length === 0) return t('common.noDates')
   const first = days[0]
   const last = days[days.length - 1]
-  if (!first || !last) return 'No dates'
+  if (!first || !last) return t('common.noDates')
   return formatDateRange(first.date, last.date)
 })
 
@@ -27,7 +30,7 @@ const stopSummary = computed(() => {
   const locations = new Set(props.itinerary.days.map(d => d.location))
   const locs = [...locations].filter(l => l !== 'TBD')
   if (locs.length <= 3) return locs.join(' → ')
-  return `${locs.slice(0, 3).join(' → ')} + ${locs.length - 3} more`
+  return `${locs.slice(0, 3).join(' → ')} ${t('itineraryCard.more', { n: locs.length - 3 })}`
 })
 
 function startEdit() {
@@ -57,8 +60,8 @@ function saveEdit() {
           class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-gray-600 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
         />
         <div class="flex gap-2">
-          <button @click="saveEdit" class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 cursor-pointer">Save</button>
-          <button @click="editing = false" class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer">Cancel</button>
+          <button @click="saveEdit" class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 cursor-pointer">{{ t('common.save') }}</button>
+          <button @click="editing = false" class="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer">{{ t('common.cancel') }}</button>
         </div>
       </div>
 
@@ -71,24 +74,24 @@ function saveEdit() {
         <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ itinerary.name }}</h3>
         <p v-if="itinerary.description" class="text-sm text-gray-500 mb-3 line-clamp-2">{{ itinerary.description }}</p>
         <div class="space-y-1 text-sm text-gray-600">
-          <div>📅 {{ dateRange }} &middot; {{ itinerary.days.length }} days</div>
+          <div>📅 {{ dateRange }} &middot; {{ itinerary.days.length }} {{ t('common.days') }}</div>
           <div>📍 {{ stopSummary }}</div>
         </div>
       </router-link>
 
       <!-- Actions -->
       <div v-if="!editing" class="px-5 py-3 border-t border-gray-100 flex gap-2">
-        <button @click.stop="startEdit" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" title="Edit">
-          ✏️ Edit
+        <button @click.stop="startEdit" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" :title="t('common.edit')">
+          {{ t('itineraryCard.edit') }}
         </button>
-        <button @click.stop="emit('duplicate')" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" title="Duplicate">
-          📋 Duplicate
+        <button @click.stop="emit('duplicate')" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" :title="t('common.duplicate')">
+          {{ t('itineraryCard.duplicate') }}
         </button>
-        <button @click.stop="emit('export')" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" title="Export JSON">
-          💾 Export
+        <button @click.stop="emit('export')" class="text-xs text-gray-500 hover:text-gray-700 cursor-pointer" :title="t('common.export')">
+          {{ t('itineraryCard.export') }}
         </button>
-        <button @click.stop="emit('delete')" class="text-xs text-red-400 hover:text-red-600 cursor-pointer" title="Delete">
-          🗑️ Delete
+        <button @click.stop="emit('delete')" class="text-xs text-red-400 hover:text-red-600 cursor-pointer" :title="t('common.delete')">
+          {{ t('itineraryCard.delete') }}
         </button>
       </div>
     </div>

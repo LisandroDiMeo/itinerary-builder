@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { presetLocations, findPresetLocation } from '@/data/locations'
 import { getLocationColor } from '@/utils/colors'
 
@@ -12,6 +13,7 @@ const emit = defineEmits<{
   update: [location: string, coordinates: [number, number]]
 }>()
 
+const { t } = useI18n()
 const editing = ref(false)
 const mode = ref<'preset' | 'custom'>('preset')
 const selectedPreset = ref('')
@@ -81,7 +83,7 @@ const canSave = computed(() => {
     @click.stop="open"
     class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer transition-colors hover:opacity-80"
     :class="[colors.bg, colors.text]"
-    title="Change location"
+    :title="t('location.changeTooltip')"
   >
     📍 {{ location }}
     <span class="text-[10px] opacity-60">✎</span>
@@ -96,14 +98,14 @@ const canSave = computed(() => {
         class="flex-1 px-3 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors"
         :class="mode === 'preset' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
       >
-        Preset City
+        {{ t('location.presetCity') }}
       </button>
       <button
         @click="mode = 'custom'"
         class="flex-1 px-3 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors"
         :class="mode === 'custom' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
       >
-        Custom Location
+        {{ t('location.customLocation') }}
       </button>
     </div>
 
@@ -112,7 +114,7 @@ const canSave = computed(() => {
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="Search cities..."
+        :placeholder="t('location.searchCities')"
         class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
       <div class="max-h-40 overflow-y-auto space-y-0.5">
@@ -127,7 +129,7 @@ const canSave = computed(() => {
           <span class="text-[10px] text-gray-400">{{ loc.coordinates[0].toFixed(2) }}, {{ loc.coordinates[1].toFixed(2) }}</span>
         </button>
         <div v-if="filteredPresets.length === 0" class="text-xs text-gray-400 py-2 text-center">
-          No matches — try Custom Location
+          {{ t('location.noMatches') }}
         </div>
       </div>
     </div>
@@ -137,12 +139,12 @@ const canSave = computed(() => {
       <input
         v-model="customName"
         type="text"
-        placeholder="Location name"
+        :placeholder="t('location.locationName')"
         class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="block text-[10px] text-gray-400 mb-0.5">Latitude</label>
+          <label class="block text-[10px] text-gray-400 mb-0.5">{{ t('location.latitude') }}</label>
           <input
             v-model="customLat"
             type="text"
@@ -151,7 +153,7 @@ const canSave = computed(() => {
           />
         </div>
         <div>
-          <label class="block text-[10px] text-gray-400 mb-0.5">Longitude</label>
+          <label class="block text-[10px] text-gray-400 mb-0.5">{{ t('location.longitude') }}</label>
           <input
             v-model="customLng"
             type="text"
@@ -168,14 +170,14 @@ const canSave = computed(() => {
         @click="editing = false"
         class="px-3 py-1 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
       <button
         @click="save"
         :disabled="!canSave"
         class="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        Update Location
+        {{ t('location.updateButton') }}
       </button>
     </div>
   </div>

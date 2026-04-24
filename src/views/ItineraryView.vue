@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, nextTick, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useItineraryStore } from '@/stores/itinerary'
 import { useUiStore } from '@/stores/ui'
@@ -22,6 +23,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useItineraryStore()
 const ui = useUiStore()
+const { t } = useI18n()
 
 const itineraryId = computed(() => route.params.id as string)
 const itinerary = computed(() => store.getById(itineraryId.value))
@@ -388,9 +390,9 @@ if (!itinerary.value) {
     <!-- Delete Day Confirmation -->
     <ConfirmDialog
       :show="!!deleteDayTarget"
-      title="Delete Day"
-      message="Are you sure you want to delete this day? Subsequent days will shift back by one day."
-      confirm-text="Delete Day"
+      :title="t('confirm.deleteDayTitle')"
+      :message="t('confirm.deleteDayMessage')"
+      :confirm-text="t('confirm.deleteDayConfirm')"
       :danger="true"
       @confirm="doDeleteDay"
       @cancel="deleteDayTarget = null"
@@ -399,9 +401,9 @@ if (!itinerary.value) {
     <!-- Remove Days Confirmation -->
     <ConfirmDialog
       :show="showRemoveConfirm"
-      title="Remove Selected Days"
-      :message="`Remove ${ui.selectedCount} selected day${ui.selectedCount !== 1 ? 's' : ''}? Remaining days will be re-dated sequentially.`"
-      confirm-text="Remove Days"
+      :title="t('confirm.removeDaysTitle')"
+      :message="t('confirm.removeDaysMessage', { count: ui.selectedCount }, ui.selectedCount)"
+      :confirm-text="t('confirm.removeDaysConfirm')"
       :danger="true"
       @confirm="doRemoveDays"
       @cancel="showRemoveConfirm = false"
@@ -410,9 +412,9 @@ if (!itinerary.value) {
     <!-- Clean Days Confirmation -->
     <ConfirmDialog
       :show="showCleanConfirm"
-      title="Clean Selected Days"
-      :message="`Clear all activities and variations from ${ui.selectedCount} selected day${ui.selectedCount !== 1 ? 's' : ''}? The days will remain but their content will be removed.`"
-      confirm-text="Clean Days"
+      :title="t('confirm.cleanDaysTitle')"
+      :message="t('confirm.cleanDaysMessage', { count: ui.selectedCount }, ui.selectedCount)"
+      :confirm-text="t('confirm.cleanDaysConfirm')"
       :danger="false"
       @confirm="doCleanDays"
       @cancel="showCleanConfirm = false"

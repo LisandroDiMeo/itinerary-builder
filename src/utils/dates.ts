@@ -1,6 +1,8 @@
+import { getIntlLocale } from '@/i18n'
+
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00')
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(getIntlLocale(), {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -10,8 +12,9 @@ export function formatDate(dateStr: string): string {
 export function formatDateRange(start: string, end: string): string {
   const s = new Date(start + 'T00:00:00')
   const e = new Date(end + 'T00:00:00')
-  const sMonth = s.toLocaleDateString('en-US', { month: 'short' })
-  const eMonth = e.toLocaleDateString('en-US', { month: 'short' })
+  const locale = getIntlLocale()
+  const sMonth = s.toLocaleDateString(locale, { month: 'short' })
+  const eMonth = e.toLocaleDateString(locale, { month: 'short' })
   if (sMonth === eMonth) {
     return `${sMonth} ${s.getDate()}-${e.getDate()}`
   }
@@ -34,7 +37,7 @@ export function generateId(): string {
 
 export function getDayOfWeek(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00')
-  return date.toLocaleDateString('en-US', { weekday: 'long' })
+  return date.toLocaleDateString(getIntlLocale(), { weekday: 'long' })
 }
 
 export function getDayNumber(dateStr: string, startDate: string): number {

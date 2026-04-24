@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { presetLocations, findPresetLocation } from '@/data/locations'
 
 const props = defineProps<{
@@ -12,6 +13,7 @@ const emit = defineEmits<{
   update: [isDayTrip: boolean | null, destination: string | null, coordinates: [number, number] | null]
 }>()
 
+const { t } = useI18n()
 const editing = ref(false)
 const enabled = ref(false)
 const mode = ref<'preset' | 'custom'>('preset')
@@ -95,18 +97,18 @@ const canSave = computed(() => {
       v-if="isDayTrip"
       @click.stop="open"
       class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-violet-100 text-violet-700 cursor-pointer transition-colors hover:bg-violet-200"
-      title="Edit day trip"
+      :title="t('dayTrip.editTooltip')"
     >
-      🚃 Day Trip: {{ dayTripDestination }}
+      {{ t('dayTrip.prefix', { destination: dayTripDestination ?? '' }) }}
       <span class="text-[10px] opacity-60">✎</span>
     </button>
     <button
       v-else
       @click.stop="open"
       class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border border-dashed border-gray-300 text-gray-400 hover:border-violet-400 hover:text-violet-600 cursor-pointer transition-colors"
-      title="Mark as day trip to another destination"
+      :title="t('dayTrip.markTooltip')"
     >
-      🚃 Day Trip
+      {{ t('dayTrip.badge') }}
     </button>
   </template>
 
@@ -119,7 +121,7 @@ const canSave = computed(() => {
         v-model="enabled"
         class="rounded border-gray-300 text-violet-600 focus:ring-violet-500"
       />
-      <span class="text-sm font-medium text-gray-700">Day trip from this location</span>
+      <span class="text-sm font-medium text-gray-700">{{ t('dayTrip.toggleLabel') }}</span>
     </label>
 
     <template v-if="enabled">
@@ -130,14 +132,14 @@ const canSave = computed(() => {
           class="flex-1 px-3 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors"
           :class="mode === 'preset' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
         >
-          Preset City
+          {{ t('location.presetCity') }}
         </button>
         <button
           @click="mode = 'custom'"
           class="flex-1 px-3 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors"
           :class="mode === 'custom' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
         >
-          Custom Location
+          {{ t('location.customLocation') }}
         </button>
       </div>
 
@@ -146,7 +148,7 @@ const canSave = computed(() => {
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search destinations..."
+          :placeholder="t('location.searchDestinations')"
           class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
         />
         <div class="max-h-40 overflow-y-auto space-y-0.5">
@@ -161,7 +163,7 @@ const canSave = computed(() => {
             <span class="text-[10px] text-gray-400">{{ loc.coordinates[0].toFixed(2) }}, {{ loc.coordinates[1].toFixed(2) }}</span>
           </button>
           <div v-if="filteredPresets.length === 0" class="text-xs text-gray-400 py-2 text-center">
-            No matches — try Custom Location
+            {{ t('location.noMatches') }}
           </div>
         </div>
       </div>
@@ -171,12 +173,12 @@ const canSave = computed(() => {
         <input
           v-model="customName"
           type="text"
-          placeholder="Destination name"
+          :placeholder="t('location.destinationName')"
           class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
         />
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-gray-400 mb-0.5">Latitude</label>
+            <label class="block text-[10px] text-gray-400 mb-0.5">{{ t('location.latitude') }}</label>
             <input
               v-model="customLat"
               type="text"
@@ -185,7 +187,7 @@ const canSave = computed(() => {
             />
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 mb-0.5">Longitude</label>
+            <label class="block text-[10px] text-gray-400 mb-0.5">{{ t('location.longitude') }}</label>
             <input
               v-model="customLng"
               type="text"
@@ -204,20 +206,20 @@ const canSave = computed(() => {
         @click="removeDayTrip"
         class="px-3 py-1 text-xs font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 cursor-pointer mr-auto"
       >
-        Remove Day Trip
+        {{ t('dayTrip.remove') }}
       </button>
       <button
         @click="editing = false"
         class="px-3 py-1 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
       <button
         @click="save"
         :disabled="!canSave"
         class="px-3 py-1 text-xs font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        {{ enabled ? 'Save Day Trip' : 'Remove Day Trip' }}
+        {{ enabled ? t('dayTrip.save') : t('dayTrip.remove') }}
       </button>
     </div>
   </div>

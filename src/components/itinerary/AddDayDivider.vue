@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 defineEmits<{ insert: []; insertMultiple: [] }>()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -11,13 +14,13 @@ defineEmits<{ insert: []; insertMultiple: [] }>()
         @click.stop="$emit('insert')"
         class="px-3 py-0.5 text-xs font-medium text-gray-400 bg-white border border-dashed border-gray-300 rounded-full hover:text-blue-600 hover:border-blue-400 cursor-pointer transition-colors"
       >
-        + Add Day
+        {{ t('day.addDay') }}
       </button>
       <button
         @click.stop="$emit('insertMultiple')"
         class="px-3 py-0.5 text-xs font-medium text-gray-400 bg-white border border-dashed border-gray-300 rounded-full hover:text-blue-600 hover:border-blue-400 cursor-pointer transition-colors"
       >
-        + Add Multiple
+        {{ t('day.addMultiple') }}
       </button>
     </div>
   </div>

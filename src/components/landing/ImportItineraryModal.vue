@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Itinerary } from '@/types'
 import { formatDateRange } from '@/utils/dates'
 import { readFileAsText } from '@/utils/file'
@@ -8,6 +9,7 @@ import BaseModal from '@/components/shared/BaseModal.vue'
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ close: []; import: [json: string] }>()
 
+const { t } = useI18n()
 const fileInput = ref<HTMLInputElement | null>(null)
 const rawJson = ref('')
 const error = ref('')
@@ -32,23 +34,23 @@ async function handleFile(e: Event) {
     rawJson.value = await readFileAsText(file)
     parseAndPreview()
   } catch {
-    error.value = 'Failed to read file'
+    error.value = t('importItinerary.errors.readFile')
   }
 }
 
 function parseAndPreview() {
   try {
     const data = JSON.parse(rawJson.value)
-    if (!data || typeof data !== 'object') throw new Error('Not a valid JSON object')
-    if (!data.name) throw new Error('Missing itinerary name')
-    if (!Array.isArray(data.days) || data.days.length === 0) throw new Error('Missing or empty days array')
+    if (!data || typeof data !== 'object') throw new Error(t('importItinerary.errors.notObject'))
+    if (!data.name) throw new Error(t('importItinerary.errors.missingName'))
+    if (!Array.isArray(data.days) || data.days.length === 0) throw new Error(t('importItinerary.errors.missingDays'))
     for (const day of data.days) {
-      if (!day.date || !day.location) throw new Error('Each day must have date and location')
+      if (!day.date || !day.location) throw new Error(t('importItinerary.errors.dayMissingFields'))
     }
     preview.value = data as Itinerary
     error.value = ''
   } catch (e: any) {
-    error.value = e.message || 'Invalid JSON format'
+    error.value = e.message || t('importItinerary.errors.invalidFormat')
     preview.value = null
   }
 }
@@ -73,19 +75,24 @@ function handleClose() {
 </script>
 
 <template>
-  <BaseModal :show="show" title="Import Itinerary" max-width="max-w-lg" @close="handleClose">
+  <BaseModal :show="show" :title="t('importItinerary.title')" max-width="max-w-lg" @close="handleClose">
     <div class="space-y-4">
       <!-- Format explanation -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
-        Upload a JSON file previously exported from this app. The file should contain an itinerary
-        with <code class="bg-blue-100 px-1 rounded">name</code>, <code class="bg-blue-100 px-1 rounded">days</code> array,
-        and each day should have <code class="bg-blue-100 px-1 rounded">date</code>, <code class="bg-blue-100 px-1 rounded">location</code>,
-        and <code class="bg-blue-100 px-1 rounded">coordinates</code>.
-      </div>
+      <i18n-t
+        keypath="importItinerary.description"
+        tag="div"
+        class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700"
+      >
+        <template #name><code class="bg-blue-100 px-1 rounded">name</code></template>
+        <template #days><code class="bg-blue-100 px-1 rounded">days</code></template>
+        <template #date><code class="bg-blue-100 px-1 rounded">date</code></template>
+        <template #location><code class="bg-blue-100 px-1 rounded">location</code></template>
+        <template #coordinates><code class="bg-blue-100 px-1 rounded">coordinates</code></template>
+      </i18n-t>
 
       <!-- File input -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Select JSON file</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('importItinerary.selectFile') }}</label>
         <input
           ref="fileInput"
           type="file"
@@ -105,8 +112,8 @@ function handleClose() {
         <h4 class="font-semibold text-gray-900">{{ preview.name }}</h4>
         <p v-if="preview.description" class="text-sm text-gray-500">{{ preview.description }}</p>
         <div class="text-sm text-gray-600 space-y-1">
-          <div>📅 {{ previewDateRange }} &middot; {{ preview.days.length }} days</div>
-          <div>📍 {{ new Set(preview.days.map(d => d.location)).size }} locations</div>
+          <div>📅 {{ previewDateRange }} &middot; {{ preview.days.length }} {{ t('common.days') }}</div>
+          <div>📍 {{ new Set(preview.days.map(d => d.location)).size }} {{ t('common.locations') }}</div>
         </div>
       </div>
     </div>
@@ -116,14 +123,14 @@ function handleClose() {
         @click="handleClose"
         class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
       <button
         @click="doImport"
         :disabled="!preview"
         class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        Import
+        {{ t('common.import') }}
       </button>
     </template>
   </BaseModal>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { StopGroup, ItineraryDay, Activity, DayVariation } from '@/types'
 import { formatDateRange } from '@/utils/dates'
 import { getLocationColor } from '@/utils/colors'
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   deleteDay: [date: string]
 }>()
 
+const { t } = useI18n()
 const colors = computed(() => getLocationColor(props.group.location))
 const dateRange = computed(() => formatDateRange(props.group.startDate, props.group.endDate))
 </script>
@@ -40,7 +42,7 @@ const dateRange = computed(() => formatDateRange(props.group.startDate, props.gr
 <template>
   <div class="mb-8">
     <div class="flex items-center gap-3 mb-4 border-l-4 pl-4" :class="colors.border">
-      <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 flex-shrink-0 select-none" title="Drag to reorder">
+      <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 flex-shrink-0 select-none" :title="t('stopGroup.dragTooltip')">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
           <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
           <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
@@ -52,7 +54,7 @@ const dateRange = computed(() => formatDateRange(props.group.startDate, props.gr
         <div class="flex items-center gap-2 text-sm text-gray-500">
           <span>{{ dateRange }}</span>
           <Badge :color="`${colors.bg} ${colors.text}`">
-            {{ group.nights }} night{{ group.nights !== 1 ? 's' : '' }}
+            {{ t('stopGroup.nights', { count: group.nights }, group.nights) }}
           </Badge>
         </div>
       </div>

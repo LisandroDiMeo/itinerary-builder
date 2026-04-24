@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/shared/BaseModal.vue'
 import { presetLocations, findPresetLocation } from '@/data/locations'
 
@@ -9,6 +10,7 @@ const emit = defineEmits<{
   add: [count: number, location: string, coordinates: [number, number], titlePrefix: string]
 }>()
 
+const { t } = useI18n()
 const count = ref(3)
 const titlePrefix = ref('')
 const mode = ref<'preset' | 'custom'>('preset')
@@ -64,10 +66,10 @@ function reset() {
 </script>
 
 <template>
-  <BaseModal :show="show" title="Add Multiple Days" @close="emit('close')">
+  <BaseModal :show="show" :title="t('addMultipleDays.title')" @close="emit('close')">
     <div class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Number of days</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('addMultipleDays.numberOfDays') }}</label>
         <input
           v-model.number="count"
           type="number"
@@ -78,21 +80,21 @@ function reset() {
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('addMultipleDays.location') }}</label>
         <div class="flex gap-1 bg-gray-200 rounded-lg p-0.5 mb-2">
           <button
             @click="mode = 'preset'"
             class="flex-1 px-3 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors"
             :class="mode === 'preset' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
           >
-            Preset City
+            {{ t('location.presetCity') }}
           </button>
           <button
             @click="mode = 'custom'"
             class="flex-1 px-3 py-1 text-xs font-medium rounded-md cursor-pointer transition-colors"
             :class="mode === 'custom' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
           >
-            Custom Location
+            {{ t('location.customLocation') }}
           </button>
         </div>
 
@@ -100,7 +102,7 @@ function reset() {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search destinations..."
+            :placeholder="t('location.searchDestinations')"
             class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <div class="max-h-40 overflow-y-auto space-y-0.5">
@@ -115,7 +117,7 @@ function reset() {
               <span class="text-[10px] text-gray-400">{{ loc.coordinates[0].toFixed(2) }}, {{ loc.coordinates[1].toFixed(2) }}</span>
             </button>
             <div v-if="filteredPresets.length === 0" class="text-xs text-gray-400 py-2 text-center">
-              No matches — try Custom Location
+              {{ t('location.noMatches') }}
             </div>
           </div>
         </div>
@@ -124,12 +126,12 @@ function reset() {
           <input
             v-model="customName"
             type="text"
-            placeholder="Destination name"
+            :placeholder="t('location.destinationName')"
             class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[10px] text-gray-400 mb-0.5">Latitude</label>
+              <label class="block text-[10px] text-gray-400 mb-0.5">{{ t('location.latitude') }}</label>
               <input
                 v-model="customLat"
                 type="text"
@@ -138,7 +140,7 @@ function reset() {
               />
             </div>
             <div>
-              <label class="block text-[10px] text-gray-400 mb-0.5">Longitude</label>
+              <label class="block text-[10px] text-gray-400 mb-0.5">{{ t('location.longitude') }}</label>
               <input
                 v-model="customLng"
                 type="text"
@@ -151,14 +153,17 @@ function reset() {
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Title prefix <span class="text-gray-400 font-normal">(optional)</span></label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('addMultipleDays.titlePrefix') }} <span class="text-gray-400 font-normal">{{ t('addMultipleDays.titlePrefixOptional') }}</span></label>
         <input
           v-model="titlePrefix"
           type="text"
-          placeholder="e.g. Day in Rome"
+          :placeholder="t('addMultipleDays.titlePrefixPlaceholder')"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <p class="text-xs text-gray-400 mt-1">Days will be named "{{ titlePrefix || 'New Day' }}{{ titlePrefix ? ' 1' : '' }}", "{{ titlePrefix || 'New Day' }}{{ titlePrefix ? ' 2' : '' }}", etc.</p>
+        <p class="text-xs text-gray-400 mt-1">{{ t('addMultipleDays.titlePrefixHint', {
+          prefix1: titlePrefix ? `${titlePrefix} 1` : t('defaults.newDay'),
+          prefix2: titlePrefix ? `${titlePrefix} 2` : t('defaults.newDay'),
+        }) }}</p>
       </div>
     </div>
 
@@ -167,14 +172,14 @@ function reset() {
         @click="emit('close')"
         class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
       >
-        Cancel
+        {{ t('common.cancel') }}
       </button>
       <button
         @click="submit"
         :disabled="!canSubmit"
         class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
-        Add {{ count }} Day{{ count !== 1 ? 's' : '' }}
+        {{ t('addMultipleDays.submit', { count }, count) }}
       </button>
     </template>
   </BaseModal>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ItineraryDay, DayVariation, Activity } from '@/types'
 import ActivityItem from './ActivityItem.vue'
 import ActivityForm from './ActivityForm.vue'
 import LocationEditor from './LocationEditor.vue'
-import { categoryIcons } from '@/utils/colors'
 
 const props = defineProps<{ day: ItineraryDay }>()
+
+const { t } = useI18n()
 
 const activeTab = defineModel<string>('activeTab', { default: 'main' })
 
@@ -49,12 +51,12 @@ const sortedVariationActivities = computed(() => {
         class="group/tab px-3 py-1.5 text-xs font-medium rounded-t-lg cursor-pointer transition-colors flex items-center gap-1"
         :class="activeTab === 'main' ? 'bg-blue-100 text-blue-700 border border-b-white border-gray-200 -mb-px' : 'text-gray-500 hover:text-gray-700'"
       >
-        Main Plan
+        {{ t('variations.mainPlan') }}
         <span
           v-if="day.variations.length > 0"
           @click.stop="emit('promoteVariation', day.variations[0]!.id)"
           class="text-gray-400 hover:text-red-500 ml-0.5 inline lg:hidden lg:group-hover/tab:inline"
-          title="Remove main and promote first variation"
+          :title="t('variations.promoteMain')"
         >&times;</span>
       </button>
       <button
@@ -64,22 +66,22 @@ const sortedVariationActivities = computed(() => {
         class="group/tab px-3 py-1.5 text-xs font-medium rounded-t-lg cursor-pointer transition-colors flex items-center gap-1"
         :class="activeTab === v.id ? 'bg-amber-100 text-amber-700 border border-b-white border-gray-200 -mb-px' : 'text-gray-500 hover:text-gray-700'"
       >
-        {{ v.sourceItineraryName || 'Manual' }}
+        {{ v.sourceItineraryName || t('variations.manual') }}
         <span
           @click.stop="emit('promoteVariation', v.id)"
           class="text-gray-400 hover:text-blue-500 inline lg:hidden lg:group-hover/tab:inline"
-          title="Promote to main"
+          :title="t('variations.promoteTooltip')"
         >&#8593;</span>
         <span
           @click.stop="emit('removeVariation', v.id)"
           class="text-gray-400 hover:text-red-500 inline lg:hidden lg:group-hover/tab:inline"
-          title="Remove variation"
+          :title="t('variations.removeTooltip')"
         >&times;</span>
       </button>
       <button
         @click="emit('addVariation')"
         class="px-2 py-1.5 text-xs text-gray-400 hover:text-blue-600 cursor-pointer transition-colors"
-        title="Add a manual variation"
+        :title="t('variations.addManualTooltip')"
       >+</button>
     </div>
 
@@ -88,9 +90,9 @@ const sortedVariationActivities = computed(() => {
       <button
         @click="emit('addVariation')"
         class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border border-dashed border-gray-300 text-gray-400 hover:border-amber-400 hover:text-amber-600 cursor-pointer transition-colors"
-        title="Add an alternative plan for this day"
+        :title="t('variations.addTooltip')"
       >
-        + Add Variation
+        {{ t('variations.add') }}
       </button>
     </div>
 
@@ -98,7 +100,7 @@ const sortedVariationActivities = computed(() => {
     <div v-if="activeTab !== 'main' && activeVariation">
       <div class="space-y-3">
         <div class="text-xs text-amber-600 mb-2">
-          {{ activeVariation.sourceItineraryName ? `From "${activeVariation.sourceItineraryName}"` : 'Manual variation' }}
+          {{ activeVariation.sourceItineraryName ? t('variations.fromSource', { name: activeVariation.sourceItineraryName }) : t('variations.manualLabel') }}
         </div>
 
         <!-- Variation location -->
