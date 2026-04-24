@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import type { Itinerary, ItineraryDay, Activity, DayVariation } from '@/types'
-import { seedItinerary } from '@/data/seed'
+import { buildSeedItinerary } from '@/data/seed'
 import { generateId } from '@/utils/dates'
-import { t } from '@/i18n'
+import { t, getLocale } from '@/i18n'
 
 const STORAGE_KEY = 'itinerary-builder-data'
 const OLD_STORAGE_KEY = 'japan-itineraries'
@@ -32,7 +32,7 @@ export const useItineraryStore = defineStore('itinerary', () => {
 
   // Seed if empty
   if (itineraries.value.length === 0) {
-    itineraries.value = [JSON.parse(JSON.stringify(seedItinerary))]
+    itineraries.value = [buildSeedItinerary(getLocale())]
     saveToStorage(itineraries.value)
   }
 
